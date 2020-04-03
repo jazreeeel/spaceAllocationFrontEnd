@@ -63,24 +63,18 @@ class Home extends React.Component{
     var password=document.getElementById("password").value;
     if(email==="admin@gmail.com" && password==="password"){
       alert("Successfully Logged In");
-      console.log("successful attempt");
       document.getElementById("email").value="";
       document.getElementById("password").value="";
-      return true;
     } else {
       if (login_attempts===0){
-        console.log("unsuccessful attempt");
         alert("No login attempts available");
-        return false;
       } else {
-        console.log("unsuccessful attempt");
         login_attempts=login_attempts-1;
         alert("Login failed, only "+login_attempts+" login attempts available");
         if(login_attempts===0){
           document.getElementById("email").disabled=true;
           document.getElementById("password").disabled=true;
         }
-        return false;
       }
     }
     return false;
@@ -101,8 +95,10 @@ class Home extends React.Component{
       <div className="Background">
         <header className="Header">
           <img src='https://asset-group.github.io/img/logo.png' alt="logo" height='50'/>
+          <text>Admin Login</text>
           <br/><br/>
-            <form onSubmit="return checklogin() && handleSubmit();" action="loginCheck.php" method="post">
+          <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.checklogin}>
               <TextField
                 id="email"
                 className={shouldMarkError("email") ? "error" : ""}
@@ -125,18 +121,13 @@ class Home extends React.Component{
                 variant='outlined'
               />
               <br/> <br/>
-              <Button disabled={isDisabled} component={Link} to='./loadInputs' variant='contained' style={{width:'100%'}}>
+              <Button disabled={isDisabled} component={Link} to='./adminAddAccount' variant='contained' style={{width:'100%'}}>
                 Login
               </Button>
             </form>
-          <br/>
-          <div style={{flexDirection:'row'}}>
-            <text>Not registered?</text>
-            <Button component={Link} to='./createAccount'>
-              Create Account
-            </Button>
-          </div>
-          <Button component={Link} to='./adminLogin'>Admin Login</Button>
+          </form >
+          <br/><br/>
+          <Button component={Link} to='./'>Student Login</Button>
         </header>
       </div>
     );

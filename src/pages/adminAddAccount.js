@@ -8,14 +8,10 @@ class createAccount extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      studentID:'',
       email: '',
-      groupName:'',
       password: '',
-      formErrors: {studentID:'', email: '', groupName:'', password: ''},
-      studentIDValid: false,
+      formErrors: {email: '', password: ''},
       emailValid: false,
-      groupNameValid: false,
       passwordValid: false,
       formValid: false
     }
@@ -30,23 +26,13 @@ class createAccount extends Component {
 
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
-    let studentIDValid = this.state.studentIDValid;
     let emailValid = this.state.emailValid;
-    let groupNameValid = this.state.groupNameValid;
     let passwordValid = this.state.passwordValid;
 
     switch(fieldName) {
-      case 'studentID':
-        studentIDValid = value.length === 7 && value.match(/^[0-9\b]+$/);
-        fieldValidationErrors.studentID = studentIDValid ? '': ' is not valid';
-        break;
       case 'email':
         emailValid = value.match(/^([\w.%+-]+)@(mymail.sutd.edu.sg)$/i);
         fieldValidationErrors.email = emailValid ? '' : ' is invalid, please use your school email';
-        break;
-      case 'groupName':
-        groupNameValid = value.length > 0;
-        fieldValidationErrors.groupName = groupNameValid ? '': ' is not valid';
         break;
       case 'password':
         passwordValid = value.length >= 6;
@@ -56,15 +42,13 @@ class createAccount extends Component {
         break;
     }
     this.setState({formErrors: fieldValidationErrors,
-      studentIDValid: studentIDValid,
       emailValid: emailValid,
-      groupNameValid: groupNameValid,
       passwordValid: passwordValid
     }, this.validateForm);
   }
 
   validateForm() {
-    this.setState({formValid: this.state.studentIDValid && this.state.emailValid && this.state.groupNameValid && this.state.passwordValid});
+    this.setState({formValid: this.state.emailValid && this.state.passwordValid});
   }
 
   errorClass(error) {
@@ -78,31 +62,11 @@ class createAccount extends Component {
           <img src='https://asset-group.github.io/img/logo.png' alt="logo" height='50'/>
           <br/><br/>
           <form>
-            <div className={`form-group ${this.errorClass(this.state.formErrors.studentID)}`}>
-              <TextField
-                type="studentID" required className="form-control" name="studentID" variant='outlined'
-                placeholder="Student ID"
-                value={this.state.studentID}
-                onChange={this.handleUserInput}
-              />
-            </div>
-            <br/>
-
             <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
               <TextField
                 type="email" required className="form-control" name="email" variant='outlined'
                 placeholder="Email"
                 value={this.state.email}
-                onChange={this.handleUserInput}
-              />
-            </div>
-            <br/>
-
-            <div className={`form-group ${this.errorClass(this.state.formErrors.groupName)}`}>
-              <TextField
-                type="groupName" required className="form-control" name="groupName" variant='outlined'
-                placeholder="Group Name"
-                value={this.state.groupName}
                 onChange={this.handleUserInput}
               />
             </div>
@@ -122,7 +86,7 @@ class createAccount extends Component {
             </div>
 
             <br/>
-            <Button type="submit" disabled={!this.state.formValid} variant='contained' style={{width:'100%'}} component={Link} to='./loadInputs'>Register</Button>
+            <Button type="submit" disabled={!this.state.formValid} variant='contained' style={{width:'100%'}} component={Link} to='./'>Add admin account</Button>
           </form>
           <br/>
           <div style={{flexDirection:'row'}}>
