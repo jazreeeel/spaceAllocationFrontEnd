@@ -6,47 +6,9 @@
         die('Connection Failed: '.$conn->connect_error);
     }else{
         //define variables and initialise with empty values
-        $groupName = $studentID = $email = $password = "";
-        $sqlgroupName = "select * from user_details where groupName = ?";
-        $sqlstudentID = "select * from user_details where studentID = ?";
+        $email = $password = "";
         $sqlemail = "select * from user_details where email = ?";
         $sqlpassword = "select * from user_details where password = ?";
-        if ($stmt = mysqli_prepare($conn, $sqlgroupName)){
-            //bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_groupName);
-            //set parameters
-            $param_groupName = trim($_POST["groupName"]);
-            if (mysqli_stmt_Execute($stmt)){
-                //store results
-                mysqli_stmt_store_result($stmt);
-                if (mysqli_stmt_num_rows($stmt) == 1){
-                    $groupName_err = "Someone from your group is already registered";
-                } else {
-                    $groupName = trim($_POST["groupName"]);
-                }
-            } else{
-                echo "Something went wrong, please try again later";
-            }
-            mysqli_stmt_close($stmt);
-        }
-        if ($stmt = mysqli_prepare($conn, $sqlstudentID)){
-            //bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_studentID);
-            //set parameters
-            $param_studentID = trim($_POST["studentID"]);
-            if (mysqli_stmt_Execute($stmt)){
-                //store results
-                mysqli_stmt_store_result($stmt);
-                if (mysqli_stmt_num_rows($stmt) == 1){
-                    $studentID_err = "Your student ID is already registered";
-                } else {
-                    $studentID = trim($_POST["studentID"]);
-                }
-            } else{
-                echo "Something went wrong, please try again later";
-            }
-            mysqli_stmt_close($stmt);
-        }
         if ($stmt = mysqli_prepare($conn, $sqlemail)){
             //bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "s", $param_email);
@@ -80,14 +42,12 @@
             mysqli_stmt_close($stmt);
         }
             
-        if (empty($studentID_err) && empty($email_err) && empty($groupName_err)){
-            $sql = "insert into user_details(groupName, studentID, email, password) values(?, ?, ?, ?)";
+        if (empty($email_err)){
+            $sql = "insert into user_details(email, password) values(?, ?)";
             if ($stmt = mysqli_prepare($conn, $sql)){
                 //bind var to prepared statement as paras
-                mysqli_stmt_bind_param($stmt, "ssss", $param_groupName, $param_studentID, $param_email, $param_password);
+                mysqli_stmt_bind_param($stmt, "ss", $param_email, $param_password);
                 //set para
-                $param_groupName = $groupName;
-                $param_studentID = $studentID;
                 $param_email = $email;
                 $param_password = $password;
                 mysqli_stmt_Execute($stmt);

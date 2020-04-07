@@ -4,6 +4,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
 
+var login_attempts=3;
+
 function validate(email, password) {
   // true means invalid, so our conditions got reversed
   return {
@@ -43,6 +45,8 @@ class Home extends React.Component{
   };
 
   handleSubmit = evt => {
+    evt.preventDefault();
+    console.log("hello");
     if (!this.canBeSubmitted()) {
       evt.preventDefault();
       return;
@@ -57,22 +61,23 @@ class Home extends React.Component{
     return !isDisabled;
   }
 
-  checklogin(){
-    var login_attempts=3;
+  checklogin = evt => {
     var email=document.getElementById("email").value;
     var password=document.getElementById("password").value;
-    if(email==="admin@gmail.com" && password==="password"){
+    var bool = "<?php echo $bool?>"
+    if(bool){
       alert("Successfully Logged In");
       console.log("successful attempt");
-      document.getElementById("email").value="";
-      document.getElementById("password").value="";
-      return true;
+      this.props.history.push('/loadInputs')
+      return
     } else {
       if (login_attempts===0){
+        evt.preventDefault();
         console.log("unsuccessful attempt");
         alert("No login attempts available");
-        return false;
+        return
       } else {
+        evt.preventDefault();
         console.log("unsuccessful attempt");
         login_attempts=login_attempts-1;
         alert("Login failed, only "+login_attempts+" login attempts available");
@@ -80,10 +85,9 @@ class Home extends React.Component{
           document.getElementById("email").disabled=true;
           document.getElementById("password").disabled=true;
         }
-        return false;
+        return
       }
     }
-    return false;
   }
 
   render(){
@@ -96,13 +100,13 @@ class Home extends React.Component{
 
       return hasError ? shouldShow : false;
     };
-
+    //onSubmit= action="loginCheck.php" method="post">
     return (
       <div className="Background">
         <header className="Header">
           <img src='https://asset-group.github.io/img/logo.png' alt="logo" height='50'/>
           <br/><br/>
-            <form onSubmit="return checklogin() && handleSubmit();" action="loginCheck.php" method="post">
+            <form onSubmit ={this.handleSubmit && this.checklogin} >
               <TextField
                 id="email"
                 className={shouldMarkError("email") ? "error" : ""}
@@ -125,9 +129,10 @@ class Home extends React.Component{
                 variant='outlined'
               />
               <br/> <br/>
-              <Button disabled={isDisabled} component={Link} to='./loadInputs' variant='contained' style={{width:'100%'}}>
+              
+              <button type = "submit" disabled={isDisabled} variant='contained' style={{width:'100%'}}>
                 Login
-              </Button>
+              </button>
             </form>
           <br/>
           <div style={{flexDirection:'row'}}>

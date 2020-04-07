@@ -3,16 +3,16 @@ import { FormErrors } from './formErrors';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { Link } from 'react-router-dom';
+import emailjs from 'emailjs-com';
 
 class createAccount extends Component {
   constructor (props) {
     super(props);
     this.state = {
       email: '',
-      password: '',
-      formErrors: {email: '', password: ''},
+      password: Math.random()*100000 | 0,
+      formErrors: {email: ''},
       emailValid: false,
-      passwordValid: false,
       formValid: false
     }
   }
@@ -27,32 +27,45 @@ class createAccount extends Component {
   validateField(fieldName, value) {
     let fieldValidationErrors = this.state.formErrors;
     let emailValid = this.state.emailValid;
-    let passwordValid = this.state.passwordValid;
+    // let passwordValid = this.state.passwordValid;
 
     switch(fieldName) {
       case 'email':
         emailValid = value.match(/^([\w.%+-]+)@(mymail.sutd.edu.sg)$/i);
         fieldValidationErrors.email = emailValid ? '' : ' is invalid, please use your school email';
         break;
-      case 'password':
-        passwordValid = value.length >= 6;
-        fieldValidationErrors.password = passwordValid ? '': ' is too short';
-        break;
+      // case 'password':
+      //   passwordValid = value.length >= 6;
+      //   fieldValidationErrors.password = passwordValid ? '': ' is too short';
+      //   break;
       default:
         break;
     }
     this.setState({formErrors: fieldValidationErrors,
-      emailValid: emailValid,
-      passwordValid: passwordValid
+      emailValid: emailValid
+      // passwordValid: passwordValid
     }, this.validateForm);
   }
 
   validateForm() {
-    this.setState({formValid: this.state.emailValid && this.state.passwordValid});
+    this.setState({formValid: this.state.emailValid});
   }
 
   errorClass(error) {
     return(error.length === 0 ? '' : 'has-error');
+  }
+
+  sendEmail = () => {
+    var template_params = {
+      "email": this.state.email,
+      "password": this.state.password
+   }
+
+    var service_id = "default_service";
+    var template_id = "addadmin";
+    var user_id = "user_CBEFF7EPbL1I4OdtdZnki"
+    emailjs.send(service_id, template_id, template_params, user_id);
+    this.props.history.push('/adminLogin');
   }
 
   render () {
@@ -61,7 +74,7 @@ class createAccount extends Component {
         <header className='Header'>
           <img src='https://asset-group.github.io/img/logo.png' alt="logo" height='50'/>
           <br/><br/>
-          <form>
+          <form onSubmit={this.sendEmail} action="http://localhost/connectlogin.php">
             <div className={`form-group ${this.errorClass(this.state.formErrors.email)}`}>
               <TextField
                 type="email" required className="form-control" name="email" variant='outlined'
@@ -72,9 +85,9 @@ class createAccount extends Component {
             </div>
             <br/>
             
-            <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
+            <div>
               <TextField
-                type="password" className="form-control" name="password" variant='outlined'
+                type="hidden" className="form-control" name="password" variant='outlined' display='none'
                 placeholder="Password"
                 value={this.state.password}
                 onChange={this.handleUserInput}
@@ -86,16 +99,13 @@ class createAccount extends Component {
             </div>
 
             <br/>
-            <Button type="submit" disabled={!this.state.formValid} variant='contained' style={{width:'100%'}} component={Link} to='./'>Add admin account</Button>
+            <button type="submit" disabled={!this.state.formValid} variant='contained' style={{width:'100%'}} component={Link} to='./'>Add admin account</button>
           </form>
           <br/>
-          <div style={{flexDirection:'row'}}>
-            <text>Already have an account?</text>
-            <Button component={Link} to='./'>
-              Login
-            </Button>
-          </div>
 
+          <Button component={Link} to='./'>
+            Change password
+          </Button>
         </header>
       </div>
     )
